@@ -1,0 +1,16 @@
+[Unit]
+Description=Jboss Application Server
+After=network.target
+
+[Service]
+Type=forking
+User=jboss
+Group=jboss
+ExecStart=/bin/bash -c '<%= "nohup #{node['day2']['jboss_home']}/bin/run.sh -b #{node[:network][:interfaces][:enp0s8][:addresses].detect{|k,v| v[:family] == "inet" }.first} &" %>'
+ExecStop=/bin/bash -c '<%= "#{node['day2']['jboss_home']}/bin/shutdown.sh -s #{node[:network][:interfaces][:enp0s8][:addresses].detect{|k,v| v[:family] == "inet" }.first} -u admin" %>'
+TimeoutStartSec=300
+TimeoutStopSec=600
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
